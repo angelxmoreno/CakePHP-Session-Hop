@@ -52,13 +52,12 @@ class SessionHopComponent extends SessionComponent {
                 $allow_life = true;
                 if(isset($target['hop_control']['request'])){
                     foreach($target['hop_control']['request'] as $param_name => $param_value){
-                        
-                        if(is_string($param_value) && $request_params[$param_name] <> $param_value){
+                        if(
+                                (is_string($param_value) && $request_params[$param_name] <> $param_value)
+                                ||
+                                (is_array($param_value) && !in_array($request_params[$param_name],$param_value))
+                        ){
                             $allow_life = false;
-                        } else {
-                            foreach($request_params[$param_name] as $foo){
-                                
-                            }
                         }
                     }
                 }
