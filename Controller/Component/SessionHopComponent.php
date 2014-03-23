@@ -50,6 +50,8 @@ class SessionHopComponent extends SessionComponent {
             $request_params = $controller->request->params;
             foreach($death_list as $soul => $target){
                 $allow_life = true;
+                
+                //controlling the session hops using the request array
                 if(isset($target['hop_control']['request'])){
                     foreach($target['hop_control']['request'] as $param_name => $param_value){
                         if(
@@ -61,6 +63,18 @@ class SessionHopComponent extends SessionComponent {
                         }
                     }
                 }
+                
+                //controlling the session hops using a maximum number of hops
+                if(isset($target['hop_control']['hops'])){
+                    //add 1 hop since this should be a new request
+                    $current_hops = (isset($target['hop_control']['current_hops'])) ? $target['hop_control']['current_hops'] + 1 : 1;
+                    if($target['hop_control']['hops'] < $current_hops){
+                        $allow_life = false;
+                    } else {
+                        parent::write($this->hop_var_name . '.' . $soul .'.'.'hop_control.current_hops', $current_hops);
+                    }
+                }
+                
                 if(!$allow_life){
                     $this->delete($this->hop_var_name . '.' . $soul);
                     /*
